@@ -12,17 +12,6 @@ const TYPE = {
     LINE: 'LINE'
 };
 
-const STATE_INIT = [{
-    id: 0,
-    type: TYPE.START,
-    nextStep: 1
-}, {
-    id: 1,
-    type: TYPE.END,
-    nextStep: -1
-}];
-
 export {
-    TYPE,
-    STATE_INIT
+    TYPE
 }
