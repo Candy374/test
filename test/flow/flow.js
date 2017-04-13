@@ -6,6 +6,7 @@ import flow from '../../src/flow/flow';
 import { TYPE } from '../../src/flow/constants';
 import * as MOCK_DATA from './mockData';
 import * as MOCK_NODE from './mockNode';
+import _ from 'lodash';
 
 const ignoreFunc = (value, other) => {
     if (typeof value === 'function' && typeof other === 'function') {
@@ -30,6 +31,8 @@ const jsonEqualArray = (obj, other) => {
 const findLine = (resultArray, fromId, toId) => {
     return resultArray.find(n => n.type === TYPE.LINE && n.fromId === fromId && n.toId === toId);
 };
+
+const findNode = (resultArray, id) => resultArray.find(n => n.id === id);
 
 describe('FLOW', function() {
     describe('init', () => {
@@ -102,21 +105,21 @@ describe('FLOW', function() {
         });
 
         it('DRAW_ADD_ACTION delete action should return DRAW_INIT', () => {
-            let result = [...MOCK_DATA.DRAW_ADD_ACTION];
-            result = flow.deleteNode(result, result[2]);
+            let result = _.cloneDeep(MOCK_DATA.DRAW_ADD_ACTION);
+            result = flow.deleteNode(result, findNode(result, 'action_0'));
             jsonEqual(result, MOCK_DATA.DRAW_INIT);
         });
 
         it('DRAW_ADD_ACTION_2 delete action should return DRAW_ADD_ACTION', () => {
-            const result = MOCK_DATA.DRAW_ADD_ACTION_2;
-            flow.deleteNode(result, result[4]);
+            let result = _.cloneDeep(MOCK_DATA.DRAW_ADD_ACTION_2);
+            result = flow.deleteNode(result, findNode(result, 'action_1'));
             jsonEqual(result, MOCK_DATA.DRAW_ADD_ACTION);
         });
 
         it('DRAW_ADD_COND delete action should return DRAW_ADD_ACTION', () => {
-            const result = MOCK_DATA.DRAW_ADD_ACTION_2;
-            flow.deleteNode(result, result[4]);
-            jsonEqual(result, MOCK_DATA.DRAW_ADD_ACTION);
+            let result = _.cloneDeep(MOCK_DATA.DRAW_ADD_COND_1_ACTION);
+            result = flow.deleteNode(result, findNode(result, 'action_0'));
+            jsonEqual(result, MOCK_DATA.DRAW_ADD_COND);
         })
     });
 

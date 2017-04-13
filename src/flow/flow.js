@@ -12,7 +12,7 @@ const addNode = function (node, args = {}) {
     toNode = toNode || findNode(this.toId);
 
     const needUpdateIndex = fromNode.nextStep.findIndex(n => n === toNode.id);
-    fromNode.nextStep = [...fromNode.nextStep.slice(0, needUpdateIndex), node.id, ...fromNode.nextStep.slice(needUpdateIndex + 1)];
+    fromNode.nextStep.splice(needUpdateIndex, 1, node.id);
 
     const nextLines = node.nextStep.map(s => getLine(node, toNode));
 
@@ -53,17 +53,17 @@ const deleteNode = function (result, node) {
         if (!fromLineIndex || !toLineIndex || !nodeIndex || !nextNodeId) {
             console.log('some data is missing! something wrong with the result array')
         } else {
-            return result.map((r, index) => {
-                if (index === fromLineIndex) {
-                    r.toId = nextNodeId;
-                } else if (r.id === fromNodeId) {
-                    r.nextStep = [nextNodeId];
-                }
-
-                if (index !== nodeIndex && index !== toLineIndex) {
+            return result
+                .filter((r, index) => index !== nodeIndex && index !== toLineIndex)
+                .map((r, index) => {
+                    if (index === fromLineIndex) {
+                        r.toId = nextNodeId;
+                    } else if (r.id === fromNodeId) {
+                        const needUpdateIndex = r.nextStep.findIndex(s => s === node.id);
+                        r.nextStep.splice(needUpdateIndex, 1, nextNodeId);
+                    }
                     return r;
-                }
-            }).filter(r => r);
+                });
         }
     }
 };
