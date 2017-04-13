@@ -85,8 +85,12 @@ const getId = (type) => {
 // - node
 // default is -1, which is means no next step
 const getNode = (type, nextStep = END_NODE) => {
+    // get next steps
     let next = {...nextStep};
     if (nextStep instanceof Array) {
+        if (nextStep.filter(r => r).length !== nextStep.length) {
+            throw new Error('next step is invalid!');
+        }
         next = nextStep.map(step => step instanceof Object ? step.id : step);
     } else {
         if (nextStep instanceof Object) {
@@ -96,11 +100,16 @@ const getNode = (type, nextStep = END_NODE) => {
         }
     }
 
+    if (type === TYPE.COND && next.length === 1) {
+        next.push(END_NODE.id);
+    }
+
     const node = {
         id: getId(type),
         type,
         nextStep: next
     };
+
     dataMap[node.id] = node;
     return node;
 };
