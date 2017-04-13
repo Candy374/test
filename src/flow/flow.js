@@ -10,13 +10,9 @@ const addNode = function (node, args = {}) {
     let {fromNode, toNode, result} = args;
     fromNode = fromNode || findNode(this.fromId);
     toNode = toNode || findNode(this.toId);
-    fromNode.nextStep = fromNode.nextStep.map(n => {
-        if (n === toNode.id) {
-            return node.id;
-        } else {
-            return n;
-        }
-    });
+
+    const needUpdateIndex = fromNode.nextStep.findIndex(n => n === toNode.id);
+    fromNode.nextStep = [...fromNode.nextStep.slice(0, needUpdateIndex), node.id, ...fromNode.nextStep.slice(needUpdateIndex + 1)];
 
     const nextLines = node.nextStep.map(s => getLine(node, toNode));
 
@@ -27,6 +23,9 @@ const addNode = function (node, args = {}) {
 
     if (result) {
         const index = result.findIndex(r => r === this);
+        if (index === -1) {
+            throw new Error('the result array is wrong!')
+        }
         return [...result.slice(0, index), ...newComps, ...result.slice(index + 1)];
     } else {
         return newComps;

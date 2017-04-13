@@ -127,7 +127,7 @@ const DRAW_ADD_COND = [{
 const DRAW_ADD_COND_1_ACTION = [{
     id: 'start_id',
     type: TYPE.START,
-    nextStep: ['action_0']
+    nextStep: ['cond_0']
 }, {
     type: TYPE.LINE,
     add: () => {
@@ -145,12 +145,6 @@ const DRAW_ADD_COND_1_ACTION = [{
     fromId: 'cond_0',
     toId: 'action_0'
 }, {
-    type: TYPE.LINE,
-    add: () => {
-    },
-    fromId: 'cond_0',
-    toId: 'end_id'
-}, {
     id: 'action_0',
     type: TYPE.ACTION,
     nextStep: ['end_id']
@@ -161,6 +155,12 @@ const DRAW_ADD_COND_1_ACTION = [{
     fromId: 'action_0',
     toId: 'end_id'
 }, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'cond_0',
+    toId: 'end_id'
+}, {
     id: 'end_id',
     type: TYPE.END,
     nextStep: [-1]
@@ -169,7 +169,7 @@ const DRAW_ADD_COND_1_ACTION = [{
 const DRAW_ADD_COND_2_ACTION = [{
     id: 'start_id',
     type: TYPE.START,
-    nextStep: ['action_0']
+    nextStep: ['cond_0']
 }, {
     type: TYPE.LINE,
     add: () => {
@@ -179,7 +179,7 @@ const DRAW_ADD_COND_2_ACTION = [{
 }, {
     id: 'cond_0',
     type: TYPE.COND,
-    nextStep: ['action_0', 'end_id']
+    nextStep: ['action_0', 'action_1', 'end_id']
 }, {
     type: TYPE.LINE,
     add: () => {
@@ -224,6 +224,55 @@ const DRAW_ADD_COND_2_ACTION = [{
     nextStep: [-1]
 }];
 
+const DRAW_ADD_COND_2_ACTION_STEP1 = [{
+    id: 'start_id',
+    type: TYPE.START,
+    nextStep: ['cond_0']
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'start_id',
+    toId: 'cond_0'
+}, {
+    id: 'cond_0',
+    type: TYPE.COND,
+    nextStep: ['action_0', 'end_id', 'end_id']
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'cond_0',
+    toId: 'action_0'
+}, {
+    id: 'action_0',
+    type: TYPE.ACTION,
+    nextStep: ['end_id']
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'action_0',
+    toId: 'end_id'
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'cond_0',
+    toId: 'end_id'
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'cond_0',
+    toId: 'end_id'
+}, {
+    id: 'end_id',
+    type: TYPE.END,
+    nextStep: [-1]
+}];
+
+
 export {
     DRAW_INIT,
     DRAW_ADD_ACTION,
@@ -231,5 +280,6 @@ export {
     DRAW_ADD_COND,
     DRAW_ADD_COND_1_ACTION,
     DRAW_ADD_COND_2_ACTION,
+    DRAW_ADD_COND_2_ACTION_STEP1,
     STATE_INIT,
 }

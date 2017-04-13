@@ -17,6 +17,20 @@ const jsonEqual = (obj, other) => {
     assert.equal(JSON.stringify(obj, null, ' '), JSON.stringify(other, null, ' '));
 };
 
+const jsonEqualArray = (obj, other) => {
+    const objData = obj.filter(o => o.type !== TYPE.LINE);
+    const otherData = other.filter(o => o.type !== TYPE.LINE);
+    assert.equal(JSON.stringify(objData, null, ' '), JSON.stringify(otherData, null, ' '));
+
+    const objLine = obj.filter(o => o.type === TYPE.LINE).map(l => `${l.fromId} ${l.toId}`).sort();
+    const otherLine = other.filter(o => o.type === TYPE.LINE).map(l => `${l.fromId} ${l.toId}`).sort();
+    assert.deepEqual(objLine, otherLine);
+};
+
+const findLine = (resultArray, fromId, toId) => {
+    return resultArray.find(n => n.type === TYPE.LINE && n.fromId === fromId && n.toId === toId);
+};
+
 describe('FLOW', function() {
     describe('init', () => {
         beforeEach(() => {
@@ -71,15 +85,14 @@ describe('FLOW', function() {
             const newCanvas = line.add(action, {result: canvas});
             RESULT = newCanvas;
             assert(newCanvas.length, 5);
-            jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_ACTION);
+            jsonEqualArray(newCanvas, MOCK_DATA.DRAW_ADD_ACTION);
         });
 
         it('add 2 actions, should return DRAW_ADD_ACTION_2', () => {
             let newCanvas = RESULT;
             const action2 = flow.getNode(TYPE.ACTION);
             newCanvas = newCanvas[3].add(action2, {result: newCanvas});
-            assert(newCanvas.length, 7);
-            jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_ACTION_2);
+            jsonEqualArray(newCanvas, MOCK_DATA.DRAW_ADD_ACTION_2);
         });
     });
 
@@ -112,34 +125,44 @@ describe('FLOW', function() {
             flow.reset();
         });
 
+
         it('COND, should return DRAW_ADD_COND', () => {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
             const cond = flow.getNode(TYPE.COND);
-            let newCanvas = line.add(cond, {result: canvas});
-            jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_COND);
+            let RESULT = line.add(cond, {result: canvas});
+
+            jsonEqualArray(RESULT, MOCK_DATA.DRAW_ADD_COND);
         });
 
         it('COND_1_action, should return DRAW_ADD_COND_1_ACTION', () => {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
-            const action = flow.getNode(TYPE.ACTION);
             const cond = flow.getNode(TYPE.COND);
             let newCanvas = line.add(cond, {result: canvas});
-            newCanvas = newCanvas[3].add(action, {result: canvas});
-            assert(newCanvas.length, 7);
-            jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_COND);
+
+            const action = flow.getNode(TYPE.ACTION);
+            newCanvas = newCanvas[3].add(action, {result: newCanvas});
+            jsonEqualArray(newCanvas, MOCK_DATA.DRAW_ADD_COND_1_ACTION);
         });
 
         it('COND_2_action, should return DRAW_ADD_COND_2_ACTION', () => {
             const canvas = flow.draw(flow.init());
-            const line = canvas[1];
+            let line = findLine(canvas, 'start_id', 'end_id');
             const action = flow.getNode(TYPE.ACTION);
             const action2 = flow.getNode(TYPE.ACTION);
-            const cond = flow.getNode(TYPE.COND, [action.id, action2.id, 'end_id']);
+            const cond = flow.getNode(TYPE.COND, ['end_id', 'end_id', 'end_id']);
+
+
             let newCanvas = line.add(cond, {result: canvas});
-            newCanvas = newCanvas[3].add(action, {result: canvas});
-            jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_COND_2_ACTION);
+            line = findLine(newCanvas, 'cond_0', 'end_id');
+            newCanvas = line.add(action, {result: newCanvas});
+            jsonEqualArray(newCanvas, MOCK_DATA.DRAW_ADD_COND_2_ACTION_STEP1);
+
+            line = findLine(newCanvas, 'cond_0', 'end_id');
+            newCanvas = line.add(action2, {result: newCanvas});
+
+            jsonEqualArray(newCanvas, MOCK_DATA.DRAW_ADD_COND_2_ACTION);
         });
     });
 });
