@@ -14,16 +14,15 @@ const ignoreFunc = (value, other) => {
 };
 
 const jsonEqual = (obj, other) => {
-    assert(JSON.stringify(obj, null, ' '), JSON.stringify(other, null, ' '));
+    assert.equal(JSON.stringify(obj, null, ' '), JSON.stringify(other, null, ' '));
 };
 
-let RESULT;
 describe('FLOW', function() {
-    beforeEach(() => {
-        flow.resetId();
-    });
-
     describe('init', () => {
+        beforeEach(() => {
+            flow.resetId();
+        });
+
         it('should return only START and END', function() {
             jsonEqual(flow.init(), MOCK_DATA.STATE_INIT);
         });
@@ -60,6 +59,12 @@ describe('FLOW', function() {
 
 
     describe('add actions', () => {
+        let RESULT;
+
+        before(() => {
+            flow.resetId();
+        });
+
         it('add 1 action, should return DRAW_ADD_ACTION', () => {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
@@ -79,10 +84,14 @@ describe('FLOW', function() {
         });
     });
 
-    describe('delete action', () => {
+    describe.only('delete action', () => {
+        beforeEach(() => {
+            flow.resetId();
+        });
+
         it('DRAW_ADD_ACTION delete action should return DRAW_INIT', () => {
-            const result = [...RESULT];
-            flow.deleteNode(result, result[2]);
+            let result = [...MOCK_DATA.DRAW_ADD_ACTION];
+            result = flow.deleteNode(result, result[2]);
             jsonEqual(result, MOCK_DATA.DRAW_INIT);
         });
 
@@ -99,7 +108,10 @@ describe('FLOW', function() {
         })
     });
 
-    describe.only('add conditions', () => {
+    describe('add conditions', () => {
+        beforeEach(() => {
+            flow.resetId();
+        });
         it('COND, should return DRAW_ADD_COND', () => {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
@@ -107,7 +119,6 @@ describe('FLOW', function() {
             const cond = flow.getNode(TYPE.COND);
             let newCanvas = line.add(cond, {result: canvas});
             newCanvas = newCanvas[3].add(action, {result: canvas});
-            assert(newCanvas.length, 7);
             jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_COND);
         });
 

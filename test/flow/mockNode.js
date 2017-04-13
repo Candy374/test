@@ -11,18 +11,18 @@ export const ACTION = {
 
 export const COND = {
     id: 'cond_0',
-    type: TYPE.ACTION,
+    type: TYPE.COND,
     nextStep: ['end_id', 'end_id']
 };
 
 export const COND_1_action = {
     id: 'cond_0',
-    type: TYPE.ACTION,
+    type: TYPE.COND,
     nextStep: ['action_0', 'end_id']
 };
 
 export const COND_2_action = {
     id: 'cond_0',
-    type: TYPE.ACTION,
+    type: TYPE.COND,
     nextStep: ['action_0', 'action_1', 'end_id']
 };

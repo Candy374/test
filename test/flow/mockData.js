@@ -68,7 +68,7 @@ const DRAW_ADD_ACTION_2 = [{
 }, {
     id: 'action_0',
     type: TYPE.ACTION,
-    nextStep: ['end_id']
+    nextStep: ['action_1']
 }, {
     type: TYPE.LINE,
     add: () => {
@@ -103,7 +103,7 @@ const DRAW_ADD_COND = [{
     toId: 'cond_0'
 }, {
     id: 'cond_0',
-    type: TYPE.ACTION,
+    type: TYPE.COND,
     nextStep: ['action_0', 'end_id']
 }, {
     type: TYPE.LINE,
@@ -136,7 +136,7 @@ const DRAW_ADD_COND_1_ACTION = [{
     toId: 'cond_0'
 }, {
     id: 'cond_0',
-    type: TYPE.ACTION,
+    type: TYPE.COND,
     nextStep: ['action_0', 'end_id']
 }, {
     type: TYPE.LINE,
@@ -178,7 +178,7 @@ const DRAW_ADD_COND_2_ACTION = [{
     toId: 'cond_0'
 }, {
     id: 'cond_0',
-    type: TYPE.ACTION,
+    type: TYPE.COND,
     nextStep: ['action_0', 'end_id']
 }, {
     type: TYPE.LINE,
