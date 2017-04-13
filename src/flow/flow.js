@@ -18,9 +18,11 @@ const addNode = function (node, args = {}) {
         }
     });
 
+    const nextLines = node.nextStep.map(s => getLine(node, toNode));
+
     const newComps = [
         getLine(fromNode, node),
-        node, getLine(node, toNode)
+        node, ...nextLines
     ];
 
     if (result) {
@@ -141,7 +143,9 @@ const drawBranch = (result, branch) => {
             const nextAction = dataMap[nextStep];
             if (nextAction) {
                 result.push(getLine(result[result.length - 1], nextAction));
-                result.push(nextAction);
+                if (nextAction.id !== END_NODE.id) {
+                    result.push(nextAction);
+                }
                 nextStep = drawBranch(result, nextAction.nextStep.slice());
             } else {
                 console.log('can not find next steps!');
@@ -159,12 +163,17 @@ const draw = () => {
 
     const branch = result[0].nextStep.slice();
     drawBranch(result, branch);
+    result.push(dataMap[END_NODE.id]);
     return result;
 };
 
-const resetId = () => {
+const reset = () => {
     actionId = 0;
     condId = 0;
+    dataMap = {
+        [START_NODE.id]: ({...START_NODE, nextStep: [END_NODE.id]}),
+        [END_NODE.id]: ({...END_NODE}),
+    }
 };
 
 export default {
@@ -172,6 +181,6 @@ export default {
     draw,
     getNode,
     getLine,
-    resetId,
+    reset,
     deleteNode
 };

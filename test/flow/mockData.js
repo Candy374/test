@@ -94,7 +94,7 @@ const DRAW_ADD_ACTION_2 = [{
 const DRAW_ADD_COND = [{
     id: 'start_id',
     type: TYPE.START,
-    nextStep: ['action_0']
+    nextStep: ['cond_0']
 }, {
     type: TYPE.LINE,
     add: () => {
@@ -104,7 +104,7 @@ const DRAW_ADD_COND = [{
 }, {
     id: 'cond_0',
     type: TYPE.COND,
-    nextStep: ['action_0', 'end_id']
+    nextStep: ['end_id', 'end_id']
 }, {
     type: TYPE.LINE,
     add: () => {

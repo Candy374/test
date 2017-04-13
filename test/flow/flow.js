@@ -20,7 +20,7 @@ const jsonEqual = (obj, other) => {
 describe('FLOW', function() {
     describe('init', () => {
         beforeEach(() => {
-            flow.resetId();
+            flow.reset();
         });
 
         it('should return only START and END', function() {
@@ -29,7 +29,6 @@ describe('FLOW', function() {
 
         it('draw init flow', () => {
             const canvas = flow.draw(flow.init());
-            assert(canvas.length, 3);
             jsonEqual(canvas, MOCK_DATA.DRAW_INIT);
         });
 
@@ -62,7 +61,7 @@ describe('FLOW', function() {
         let RESULT;
 
         before(() => {
-            flow.resetId();
+            flow.reset();
         });
 
         it('add 1 action, should return DRAW_ADD_ACTION', () => {
@@ -84,9 +83,9 @@ describe('FLOW', function() {
         });
     });
 
-    describe.only('delete action', () => {
+    describe('delete action', () => {
         beforeEach(() => {
-            flow.resetId();
+            flow.reset();
         });
 
         it('DRAW_ADD_ACTION delete action should return DRAW_INIT', () => {
@@ -110,15 +109,14 @@ describe('FLOW', function() {
 
     describe('add conditions', () => {
         beforeEach(() => {
-            flow.resetId();
+            flow.reset();
         });
+
         it('COND, should return DRAW_ADD_COND', () => {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
-            const action = flow.getNode(TYPE.ACTION);
             const cond = flow.getNode(TYPE.COND);
             let newCanvas = line.add(cond, {result: canvas});
-            newCanvas = newCanvas[3].add(action, {result: canvas});
             jsonEqual(newCanvas, MOCK_DATA.DRAW_ADD_COND);
         });
 
