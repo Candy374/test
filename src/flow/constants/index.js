@@ -8,6 +8,8 @@ const TYPE = {
     CLOCK: 'CLOCK',
     COND: 'COND',
     END: 'END',
+
+    LINE: 'LINE'
 };
 
 const STATE_INIT = [{
@@ -20,7 +22,7 @@ const STATE_INIT = [{
     nextStep: -1
 }];
 
-export default {
+export {
     TYPE,
     STATE_INIT
 }
