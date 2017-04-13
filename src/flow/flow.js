@@ -6,7 +6,8 @@ import { TYPE } from './constants'
 
 
 let dataMap = {};
-const add = function (node, fromNode, toNode) {
+const addNode = function (node, args = {}) {
+    let {fromNode, toNode, result} = args;
     fromNode = fromNode || findNode(this.fromId);
     toNode = toNode || findNode(this.toId);
     fromNode.nextStep = fromNode.nextStep.map(n => {
@@ -17,10 +18,21 @@ const add = function (node, fromNode, toNode) {
         }
     });
 
-    return [
+    const newComps = [
         getLine(fromNode, node),
         node, getLine(node, toNode)
-    ]
+    ];
+
+    if (result) {
+        const index = result.findIndex(r => r === this);
+        return [result.slice(0, index), ...newComps, result.slice(index + 1)];
+    } else {
+        return newComps;
+    }
+};
+
+const deleteNode = function () {
+
 };
 
 const findNode = (id) => {
@@ -30,7 +42,7 @@ const findNode = (id) => {
 const getLine = (from, to) => {
     return {
         type: TYPE.LINE,
-        add,
+        add: addNode,
         fromId: from.id,
         toId: to.id
     }
@@ -67,7 +79,10 @@ const getNode = (type, nextStep = END_NODE) => {
     const node = {
         id: getId(type),
         type,
-        nextStep: next
+        nextStep: next,
+        delete: () => {
+
+        }
     };
     dataMap[node.id] = node;
     return node;
@@ -109,9 +124,15 @@ const draw = () => {
     return result;
 };
 
+const resetId = () => {
+    actionId = 0;
+    condId = 0;
+};
+
 export default {
     init,
     draw,
     getNode,
     getLine,
+    resetId
 };
