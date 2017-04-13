@@ -19,7 +19,8 @@ const DRAW_INIT = [{
     nextStep: ['end_id']
 }, {
     type: TYPE.LINE,
-    add: () => {},
+    add: () => {
+    },
     fromId: 'start_id',
     toId: 'end_id'
 }, {
@@ -34,17 +35,55 @@ const DRAW_ADD_ACTION = [{
     nextStep: ['action_0']
 }, {
     type: TYPE.LINE,
-    add: () => {},
+    add: () => {
+    },
     fromId: 'start_id',
     toId: 'action_0'
 }, {
     id: 'action_0',
     type: TYPE.ACTION,
     nextStep: ['end_id']
-},{
+}, {
     type: TYPE.LINE,
-    add: () => {},
+    add: () => {
+    },
     fromId: 'action_0',
+    toId: 'end_id'
+}, {
+    id: 'end_id',
+    type: TYPE.END,
+    nextStep: [-1]
+}];
+
+const DRAW_ADD_ACTION_2 = [{
+    id: 'start_id',
+    type: TYPE.START,
+    nextStep: ['action_0']
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'start_id',
+    toId: 'action_0'
+}, {
+    id: 'action_0',
+    type: TYPE.ACTION,
+    nextStep: ['end_id']
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'action_0',
+    toId: 'action_1'
+}, {
+    id: 'action_1',
+    type: TYPE.ACTION,
+    nextStep: ['end_id']
+}, {
+    type: TYPE.LINE,
+    add: () => {
+    },
+    fromId: 'action_1',
     toId: 'end_id'
 }, {
     id: 'end_id',
@@ -55,5 +94,6 @@ const DRAW_ADD_ACTION = [{
 export {
     DRAW_INIT,
     DRAW_ADD_ACTION,
+    DRAW_ADD_ACTION_2,
     STATE_INIT
 }

@@ -18,9 +18,8 @@ const add = function (node, fromNode, toNode) {
     });
 
     return [
-        fromNode, getLine(fromNode, node),
-        node, getLine(node, toNode),
-        toNode
+        getLine(fromNode, node),
+        node, getLine(node, toNode)
     ]
 };
 
@@ -31,23 +30,6 @@ const findNode = (id) => {
 const getLine = (from, to) => {
     return {
         type: TYPE.LINE,
-        // add: (node, fromNode, toNode) => {
-        //     fromNode = fromNode || findNode(from.id);
-        //     toNode = toNode || findNode(to.id);
-        //     fromNode.nextStep = fromNode.nextStep.map(n => {
-        //         if (n === toNode.id) {
-        //             return node.id;
-        //         } else {
-        //             return n;
-        //         }
-        //     });
-        //
-        //     return [
-        //         fromNode, getLine(fromNode, node),
-        //         node, getLine(node, toNode),
-        //         toNode
-        //     ]
-        // },
         add,
         fromId: from.id,
         toId: to.id
@@ -82,11 +64,13 @@ const getNode = (type, nextStep = END_NODE) => {
         }
     }
 
-    return {
+    const node = {
         id: getId(type),
         type,
         nextStep: next
     };
+    dataMap[node.id] = node;
+    return node;
 };
 
 const START_NODE = getNode(TYPE.START, 'end_id');
@@ -116,31 +100,12 @@ const drawBranch = (result, branch) => {
     return nextStep;
 };
 
-const draw = (data) => {
+const draw = () => {
     const result = [];
-    let startNode;
-    dataMap = {};
-    data.map(datum => {
-        dataMap[datum.id] = datum;
-        if (datum.type === TYPE.START) {
-            startNode = datum;
-        }
-    });
+    result.push(dataMap[START_NODE.id]);
 
-    if (startNode) {
-        result.push(dataMap[startNode.id]);
-        // let nextStep = result[result.length - 1].nextStep;
-        // drawBranch(result, nextStep)
-
-        const branch = startNode.nextStep.slice();
-        drawBranch(result, branch)
-        // while (branch.length > 0) {
-        //     if (drawBranch(result, branch[0])) {
-        //         branch.shift();
-        //     }
-        // }
-    }
-
+    const branch = result[0].nextStep.slice();
+    drawBranch(result, branch);
     return result;
 };
 

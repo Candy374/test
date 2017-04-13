@@ -37,21 +37,25 @@ describe('FLOW', function() {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
             const action = flow.getNode(TYPE.ACTION);
-            const newCanvas = line.add(action);
+            const newCanvas = [canvas[0], ...line.add(action), canvas[2]];
             assert(newCanvas.length, 5);
             assert(JSON.stringify(newCanvas, null, ' '), JSON.stringify(MOCK_RESULT.DRAW_ADD_ACTION, null, ' '));
         })
     });
 
-    describe('add an action without given from and to', () => {
-        it('should return START, LINE, ACTION, LINE, END', () => {
+    describe('add 2 actions ', () => {
+        it('should return START, LINE, ACTION, LINE, ACTION, LINE, END', () => {
             const canvas = flow.draw(flow.init());
             const line = canvas[1];
-            const newCanvas = line.add(flow.getNode(TYPE.ACTION), canvas[0], canvas[1]);
-            assert(newCanvas.length, 5);
-            assert(newCanvas[1].type, TYPE.LINE);
-            assert(newCanvas[2].type, TYPE.ACTION);
-            assert(newCanvas[3].type, TYPE.LINE);
+            const action = flow.getNode(TYPE.ACTION);
+            let newCanvas = [canvas[0], ...line.add(action), canvas[2]];
+
+            assert(JSON.stringify(newCanvas, null, ' '), JSON.stringify(MOCK_RESULT.DRAW_ADD_ACTION, null, ' '));
+
+            const action2 = flow.getNode(TYPE.ACTION);
+            newCanvas = [newCanvas.slice(0, 3), ...newCanvas[3].add(action2), newCanvas.slice(4)];
+            assert(newCanvas.length, 7);
+            assert(JSON.stringify(newCanvas, null, ' '), JSON.stringify(MOCK_RESULT.DRAW_ADD_ACTION_2, null, ' '));
         })
     })
 });
