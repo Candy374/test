@@ -31,8 +31,28 @@ const addNode = function (node, args = {}) {
     }
 };
 
-const deleteNode = function () {
-
+const deleteNode = function (result, node) {
+    if (this.type === TYPE.ACTION) {
+        let fromLine = {}, toLineIndex = 0, nextNodeId = 0, nodeIndex = 0;
+        result.forEach((n, index) => {
+            if (n.type === TYPE.LINE) {
+                if (n.toId === node.id) {
+                    fromLine = n;
+                } else if (n.fromId === this.id) {
+                    toLineIndex = index;
+                    nextNodeId = n.toId;
+                }
+            } else if (n === node) {
+                nodeIndex = index;
+            }
+        });
+        if (!fromLine.toId || !toLineIndex || !nodeIndex || !nodeIndex) {
+            console.log('some data is missing! something wrong with the result array')
+        } else {
+            fromLine.toId = nextNodeId;
+            return result.filter((r, index) => index !== nodeIndex && index !== toLineIndex);
+        }
+    }
 };
 
 const findNode = (id) => {
@@ -79,10 +99,7 @@ const getNode = (type, nextStep = END_NODE) => {
     const node = {
         id: getId(type),
         type,
-        nextStep: next,
-        delete: () => {
-
-        }
+        nextStep: next
     };
     dataMap[node.id] = node;
     return node;
@@ -134,5 +151,6 @@ export default {
     draw,
     getNode,
     getLine,
-    resetId
+    resetId,
+    deleteNode
 };
