@@ -2,7 +2,7 @@
  * Created by huangling on 13/4/2017.
  */
 import assert from 'assert';
-import flow from '../../src/flow/flow';
+import flow from '../../src/flow/utils/flow';
 import { TYPE } from '../../src/flow/constants';
 import * as MOCK_DATA from './mockData';
 import * as MOCK_NODE from './mockNode';

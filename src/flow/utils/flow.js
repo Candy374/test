@@ -2,7 +2,7 @@
  * Created by huangling on 13/4/2017.
  */
 
-import { TYPE } from './constants'
+import { TYPE } from '../constants'
 import _ from 'lodash';
 
 let dataMap = {};
