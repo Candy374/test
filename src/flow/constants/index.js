@@ -14,4 +14,4 @@ const TYPE = {
 
 export {
     TYPE
-}
+};
