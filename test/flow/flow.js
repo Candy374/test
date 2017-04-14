@@ -123,6 +123,30 @@ describe('FLOW', function() {
         })
     });
 
+    describe('delete cond', () => {
+        beforeEach(() => {
+            flow.reset();
+        });
+
+        it('DRAW_ADD_COND delete cond should return STATE_INIT', () => {
+            let result = _.cloneDeep(MOCK_DATA.DRAW_ADD_COND);
+            result = flow.deleteNode(result, findNode(result, 'cond_0'));
+            jsonEqual(result, MOCK_DATA.STATE_INIT);
+        });
+
+        it('DRAW_ADD_COND_1_ACTION delete cond should return STATE_INIT', () => {
+            let result = _.cloneDeep(MOCK_DATA.DRAW_ADD_COND_1_ACTION);
+            result = flow.deleteNode(result, findNode(result, 'cond_0'));
+            jsonEqual(result, MOCK_DATA.STATE_INIT);
+        });
+
+        it('DRAW_ADD_COND_2_ACTION delete cond should return STATE_INIT', () => {
+            let result = _.cloneDeep(MOCK_DATA.DRAW_ADD_COND_2_ACTION);
+            result = flow.deleteNode(result, findNode(result, 'cond_0'));
+            jsonEqual(result, MOCK_DATA.STATE_INIT);
+        })
+    });
+
     describe('add conditions', () => {
         beforeEach(() => {
             flow.reset();

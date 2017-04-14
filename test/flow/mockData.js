@@ -8,6 +8,10 @@ const STATE_INIT = [{
     type: TYPE.START,
     nextStep: ['end_id']
 }, {
+    type: TYPE.LINE,
+    fromId: 'start_id',
+    toId: 'end_id'
+}, {
     id: 'end_id',
     type: TYPE.END,
     nextStep: [-1]

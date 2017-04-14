@@ -3,11 +3,11 @@
  */
 
 import { TYPE } from './constants'
-
+import _ from 'lodash';
 
 let dataMap = {};
 const addNode = function (node, args = {}) {
-    let {fromNode, toNode, result} = args;
+    let { fromNode, toNode, result } = args;
     fromNode = fromNode || findNode(this.fromId);
     toNode = toNode || findNode(this.toId);
 
@@ -32,40 +32,92 @@ const addNode = function (node, args = {}) {
     }
 };
 
-const deleteNode = function (result, node) {
-    if (node.type === TYPE.ACTION) {
-        let fromLineIndex = 0, toLineIndex = 0, fromNodeId = 0, nextNodeId = 0, nodeIndex = 0;
-
-        result.forEach((n, index) => {
-            if (n.type === TYPE.LINE) {
-                if (n.toId === node.id) {
-                    fromLineIndex = index;
-                    fromNodeId = n.fromId;
-                } else if (n.fromId === node.id) {
-                    toLineIndex = index;
-                    nextNodeId = n.toId;
-                }
-            } else if (n === node) {
-                nodeIndex = index;
+const getSubNode = function (node, subNodes, resultMap) {
+    node.nextStep.map(id => {
+        if (!subNodes[id]) {
+            const node = resultMap[id];
+            if (node) {
+                subNodes[id] = node;
+                getSubNode(node, subNodes, resultMap);
             }
-        });
-
-        if (!fromLineIndex || !toLineIndex || !nodeIndex || !nextNodeId) {
-            console.log('some data is missing! something wrong with the result array')
-        } else {
-            return result
-                .filter((r, index) => index !== nodeIndex && index !== toLineIndex)
-                .map((r, index) => {
-                    if (index === fromLineIndex) {
-                        r.toId = nextNodeId;
-                    } else if (r.id === fromNodeId) {
-                        const needUpdateIndex = r.nextStep.findIndex(s => s === node.id);
-                        r.nextStep.splice(needUpdateIndex, 1, nextNodeId);
-                    }
-                    return r;
-                });
         }
+    });
+};
+
+const findSubNode = function (result, node) {
+    const resultMap = {};
+    result.forEach(n => {
+        if (n.type !== TYPE.LINE) {
+            resultMap[n.id] = n;
+        }
+    });
+
+    const subNodes = {};
+    getSubNode(node, subNodes, resultMap);
+
+    const subLineIndexs = [];
+    const subNodeIndexs = [];
+    result.forEach((line, index) => {
+        if (line.type === TYPE.LINE && subNodes[line.toId] && (subNodes[line.fromId] || line.fromId === node.id)) {
+            subLineIndexs.push(index);
+        }
+
+        if (subNodes[line.id]) {
+            subNodeIndexs.push(index);
+        }
+    });
+
+    return subLineIndexs.concat(subNodeIndexs);
+};
+
+const deleteNode = function (result, node) {
+    // delete all the next steps
+    let fromLineIndex = '', fromNodeId = '', nextNodeId = '';
+
+    result.forEach((n, index) => {
+        if (n.type === TYPE.LINE) {
+            if (n.toId === node.id) {
+                fromLineIndex = index;
+                fromNodeId = n.fromId;
+            } else if (n.fromId === node.id) {
+                nextNodeId = n.toId;
+            }
+        }
+    });
+
+    const deleteIndexs = findSubNode(result, node);
+    let arrayIsInvalid = '' === fromLineIndex || '' === fromNodeId;
+
+    if (node.type === TYPE.ACTION) {
+        arrayIsInvalid = arrayIsInvalid || '' === nextNodeId;
+    } else if (node.type === TYPE.COND) {
+        nextNodeId = END_NODE.id;
     }
+
+    if (arrayIsInvalid) {
+        throw new Error('some data is missing! something wrong with the result array');
+    }
+
+    return result
+        .filter((r, index) => {
+            if (!deleteIndexs.includes(index) && r.id !== node.id) {
+                return true;
+            } else {
+                if (r.id !== END_NODE.id) {
+                    delete dataMap[r.id];
+                }
+                return false;
+            }
+        })
+        .map((r, index) => {
+            if (index === fromLineIndex) {
+                r.toId = nextNodeId;
+            } else if (r.id === fromNodeId) {
+                const needUpdateIndex = r.nextStep.findIndex(s => s === node.id);
+                r.nextStep.splice(needUpdateIndex, 1, nextNodeId);
+            }
+            return r;
+        }).concat(dataMap[END_NODE.id]);
 };
 
 const findNode = (id) => {
@@ -85,10 +137,14 @@ let actionId = 0;
 let condId = 0;
 const getId = (type) => {
     switch (type) {
-        case TYPE.START: return 'start_id';
-        case TYPE.END: return 'end_id';
-        case TYPE.ACTION: return 'action_' + actionId++;
-        case TYPE.COND: return 'cond_' + condId++;
+        case TYPE.START:
+            return 'start_id';
+        case TYPE.END:
+            return 'end_id';
+        case TYPE.ACTION:
+            return 'action_' + actionId++;
+        case TYPE.COND:
+            return 'cond_' + condId++;
     }
 };
 
@@ -99,7 +155,7 @@ const getId = (type) => {
 // default is -1, which is means no next step
 const getNode = (type, nextStep = END_NODE) => {
     // get next steps
-    let next = {...nextStep};
+    let next = { ...nextStep };
     if (nextStep instanceof Array) {
         if (nextStep.filter(r => r).length !== nextStep.length) {
             throw new Error('next step is invalid!');
@@ -129,8 +185,14 @@ const getNode = (type, nextStep = END_NODE) => {
 
 const START_NODE = getNode(TYPE.START, 'end_id');
 const END_NODE = getNode(TYPE.END, -1);
+const INIT = [START_NODE, {
+    type: TYPE.LINE,
+    fromId: START_NODE.id,
+    toId: END_NODE.id
+}, END_NODE];
+
 const init = () => {
-    return [{...START_NODE}, {...END_NODE}];
+    return _.cloneDeep(INIT);
 };
 
 
@@ -170,8 +232,8 @@ const reset = () => {
     actionId = 0;
     condId = 0;
     dataMap = {
-        [START_NODE.id]: ({...START_NODE, nextStep: [END_NODE.id]}),
-        [END_NODE.id]: ({...END_NODE}),
+        [START_NODE.id]: ({ ...START_NODE, nextStep: [END_NODE.id] }),
+        [END_NODE.id]: ({ ...END_NODE }),
     }
 };
 
