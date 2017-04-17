@@ -7,6 +7,7 @@ import { TYPE } from '../../src/flow/constants';
 import * as MOCK_DATA from './mockData';
 import * as MOCK_NODE from './mockNode';
 import _ from 'lodash';
+import { translate } from './help'
 
 const ignoreFunc = (value, other) => {
     if (typeof value === 'function' && typeof other === 'function') {
@@ -192,4 +193,12 @@ describe('FLOW', function() {
             jsonEqualArray(newCanvas, MOCK_DATA.DRAW_ADD_COND_2_ACTION);
         });
     });
+
+    describe.only('flow chart', () => {
+        Object.keys(MOCK_DATA).map(arr => {
+            const flowChart = translate(MOCK_DATA[arr]);
+            console.log(flowChart.join('\n'));
+            console.log('\n\n');
+        });
+    })
 });

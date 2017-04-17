@@ -4,11 +4,11 @@
 import React, { Component } from 'react';
 
 
-export default class Node extends Component {
+export default class Line extends Component {
     render () {
         const { type, id} = this.props;
         return (
-            <div className={"node " + type} id={id}>
+            <div className={"line " + type} id={id}>
                 {id}
             </div>
         )
