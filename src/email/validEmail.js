@@ -39,12 +39,7 @@ const validEmail = email => {
     // 顶级域名（com、cn等）长度为2到6个
     // 连词号-不能是第一个字符
     const reg = /^[^\.-][\w-\.]+@[\w-]+(\.[a-z\d-]+)*(\.[a-z]{2,6})$/i;
-    if (reg.test(email) == false) {
-        return false;
-    }
-
-    return true
-
+    return reg.test(email);
 };
 
 export default validEmail;
