@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import flow from '../utils/flow';
 import Node from './Node';
 import Line from './Line';
+import Container from './Container';
 import { TYPE } from '../constants';
 
 export default class Flow extends Component {
@@ -17,13 +18,13 @@ export default class Flow extends Component {
     render() {
         const { nodes } = this.state;
         return (
-            <div>{nodes.map((n, key) => {
+            <Container>{nodes.map((n, key) => {
                 if (n.type === TYPE.LINE ) {
                     return <Line {...n} key={key}/>
                 } else {
                     return <Node {...n} key={key}/>
                 }
-            })}</div>
+            })}</Container>
         );
     }
 }

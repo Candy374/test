@@ -8,9 +8,9 @@ export default class Line extends Component {
     render () {
         const { type, id} = this.props;
         return (
-            <div className={"line " + type} id={id}>
-                {id}
-            </div>
+            <svg className={type} id={id}>
+                <path d="M10 10 L 20 20" stroke="blue">{id}</path>
+            </svg>
         )
     }
 }
